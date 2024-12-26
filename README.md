@@ -17,6 +17,28 @@ Just add the following line to [dependencies] in your Cargo.toml file:
 rusty_shield = { git = "https://github.com/tn3w/rusty-shield" }
 ```
 
+And then integrate the MiddleWare into your Actix-web app by registering it:
+
+```rust
+use actix_web::{web, App, HttpServer, HttpResponse};
+use rusty_shield::CookieMiddleware;
+
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| {
+        App::new()
+            .wrap(CookieMiddleware)  // Register the cookie middleware
+            .service(
+                web::scope("")
+                    .route("/", web::get().to(|| async { HttpResponse::Ok().body("Hello World!") }))
+            )
+    })
+    .bind("127.0.0.1:8080")?
+    .run()
+    .await
+}
+```
+
 ## Building
 1. Install Rust using rust-up (optional): 
     ```bash
@@ -51,26 +73,3 @@ rusty_shield = { git = "https://github.com/tn3w/rusty-shield" }
     ```bash
     cargo build --release
     ```
-
-## 🤝 Integration
-Integrate the MiddleWare into your Actix-web app by registering it:
-
-```rust
-use actix_web::{web, App, HttpServer, HttpResponse};
-use rusty_shield::CookieMiddleware;
-
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .wrap(CookieMiddleware)  // Register the cookie middleware
-            .service(
-                web::scope("")
-                    .route("/", web::get().to(|| async { HttpResponse::Ok().body("Hello World!") }))
-            )
-    })
-    .bind("127.0.0.1:8080")?
-    .run()
-    .await
-}
-```

@@ -5,7 +5,6 @@
         <img height="128" alt="Picture from Block Page" src="https://github.com/tn3w/rusty-shield/releases/download/logo/rusty-logo-light.png">
     </picture>
 </p>
-<br>
 <h1 align="center">rusty-shield</h1>
 <h6 align="center">A component of the Rusty toolbox designed for web application security: <a href="https://github.com/tn3w/rusty-loadbalancing">rusty-loadbalancing</a>, <a href="https://github.com/tn3w/rusty-shield">rusty-shield</a></h6>
 <p align="center">An Actix-web middleware for checking IP addresses to identify unglobal, malicious, and TOR connections. It provides the browser with a zero-click Proof of Work (PoW) task, or, if JavaScript is disabled, a one-click CAPTCHA image challenge.</p>

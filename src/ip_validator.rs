@@ -189,8 +189,8 @@ impl IpChecker {
                 }
             }
             Err(_) => {
-                let _ = self.cache.set_cached_bool("tor_hostname", ip_address, true, TTL);
-                return Some(true);
+                let _ = self.cache.set_cached_bool("tor_hostname", ip_address, false, TTL);
+                return Some(false);
             }
         }
 
@@ -334,7 +334,7 @@ mod tests {
             "185.220.101.52"
         ];
 
-        println!("\nIpv4 TOR Hostname Benchmarks:");
+        println!("\nIPv4 TOR Hostname Benchmarks:");
         for ip in ips {
             let start = Instant::now();
             for _ in 0..100_000 {
@@ -358,7 +358,7 @@ mod tests {
             "2a00:1b88:4::4"
         ];
 
-        println!("\nIp TOR Exonerator Benchmarks:");
+        println!("\nIP TOR Exonerator Benchmarks:");
         for ip in ips {
             let start = Instant::now();
             for _ in 0..100_000 {
@@ -370,16 +370,107 @@ mod tests {
     }
 
     #[actix_rt::test]
-    async fn test_malicious_ips() {
+    async fn test_ipv4_tor() {
         let ip_checker = IpChecker::new("redis://127.0.0.1/").unwrap();
-        assert!(ip_checker.is_ipv4_tor("92.246.84.133").await.expect("REASON"));
-        assert!(ip_checker.is_ipv4_tor("178.20.55.182").await.expect("REASON"));
-        assert!(ip_checker.is_ipv4_tor("195.47.238.91").await.expect("REASON"));
-        assert!(ip_checker.is_ipv4_tor("185.220.101.52").await.expect("REASON"));
-        assert!(ip_checker.is_ip_tor_exonerator("92.246.84.133").await.expect("REASON"));
-        assert!(ip_checker.is_ip_tor_exonerator("178.20.55.182").await.expect("REASON"));
-        assert!(ip_checker.is_ip_tor_exonerator("2a0d:c2c0:1:4::2").await.expect("REASON"));
-        assert!(ip_checker.is_ip_tor_exonerator("2a00:1b88:4::4").await.expect("REASON"));
+
+        // Residential IP
+        assert!(
+            !ip_checker.is_ipv4_tor("75.123.45.67").await.expect("Failed to check residential IP address"),
+            "Residential IP address was incorrectly identified as a Tor exit node"
+        );
+
+        // Cloudflare Public DNS
+        assert!(
+            !ip_checker.is_ipv4_tor("1.1.1.1").await.expect("Failed to check Cloudflare DNS IP address"),
+            "Cloudflare Public DNS IP address was incorrectly identified as a Tor exit node"
+        );
+
+        // Google Public DNS
+        assert!(
+            !ip_checker.is_ipv4_tor("8.8.8.8").await.expect("Failed to check Google DNS IP address"),
+            "Google Public DNS IP address was incorrectly identified as a Tor exit node"
+        );
+
+        // IPv6 Address
+        assert!(
+            !ip_checker.is_ipv4_tor("2a0d:c2c0:1:4::2").await.expect("Failed to check IPv6 address"),
+            "IPv6 address was incorrectly processed by IPv4 Tor checker"
+        );
+
+        assert!(
+            ip_checker.is_ipv4_tor("92.246.84.133").await.expect("Failed to check known Tor exit node"),
+            "Known Tor exit node was not correctly identified"
+        );
+        assert!(
+            ip_checker.is_ipv4_tor("178.20.55.182").await.expect("Failed to check known Tor exit node"),
+            "Known Tor exit node was not correctly identified"
+        );
+        assert!(
+            ip_checker.is_ipv4_tor("195.47.238.91").await.expect("Failed to check known Tor exit node"),
+            "Known Tor exit node was not correctly identified"
+        );
+        assert!(
+            ip_checker.is_ipv4_tor("185.220.101.52").await.expect("Failed to check known Tor exit node"),
+            "Known Tor exit node was not correctly identified"
+        );
+    }
+
+    #[actix_rt::test]
+    async fn test_tor_exonerator() {
+        let ip_checker = IpChecker::new("redis://127.0.0.1/").unwrap();
+
+        // Residential IP
+        assert!(
+            !ip_checker.is_ip_tor_exonerator("75.123.45.67").await.expect("Failed to check residential IP address"),
+            "Residential IP address was incorrectly identified as a Tor exit node"
+        );
+
+        // Cloudflare Public DNS
+        assert!(
+            !ip_checker.is_ip_tor_exonerator("1.1.1.1").await.expect("Failed to check Cloudflare DNS IP address"),
+            "Cloudflare Public DNS IP address was incorrectly identified as a Tor exit node"
+        );
+
+        // Google Public DNS
+        assert!(
+            !ip_checker.is_ip_tor_exonerator("8.8.8.8").await.expect("Failed to check Google DNS IP address"),
+            "Google Public DNS IP address was incorrectly identified as a Tor exit node"
+        );
+
+        // Cloudflare Public DNS
+        assert!(
+            !ip_checker.is_ip_tor_exonerator("2606:4700:4700::1111").await.expect("Failed to check Cloudflare DNS IP address"),
+            "Cloudflare Public DNS IPv6 address was incorrectly identified as a Tor exit node"
+        );
+
+        // Google Public DNS
+        assert!(
+            !ip_checker.is_ip_tor_exonerator("2001:4860:4860::8888").await.expect("Failed to check IPv6 address"),
+            "Google Public DNS IPv6 address was incorrectly identified as a Tor exit node"
+        );
+
+        // OpenDNS Public DNS
+        assert!(
+            !ip_checker.is_ip_tor_exonerator("2620:119:35::35").await.expect("Failed to check IPv6 address"),
+            "OpenDNS Public DNS IPv6 address was incorrectly identified as a Tor exit node"
+        );
+
+        assert!(
+            ip_checker.is_ip_tor_exonerator("92.246.84.133").await.expect("Failed to check IPv4 address in Tor exonerator"),
+            "Known Tor exit node was not found in exonerator database"
+        );
+        assert!(
+            ip_checker.is_ip_tor_exonerator("178.20.55.182").await.expect("Failed to check IPv4 address in Tor exonerator"),
+            "Known Tor exit node was not found in exonerator database"
+        );
+        assert!(
+            ip_checker.is_ip_tor_exonerator("2a0d:c2c0:1:4::2").await.expect("Failed to check IPv6 address in Tor exonerator"),
+            "Known IPv6 Tor exit node was not found in exonerator database"
+        );
+        assert!(
+            ip_checker.is_ip_tor_exonerator("2a00:1b88:4::4").await.expect("Failed to check IPv6 address in Tor exonerator"),
+            "Known IPv6 Tor exit node was not found in exonerator database"
+        );
     }
 
     #[test]
@@ -404,7 +495,7 @@ mod tests {
     #[test]
     fn test_valid_public_ipv6() {
         assert!(is_valid_public_ip("2001:0db7:85a3:0000:0000:8a2e:0370:7334")); // Valid public address
-        assert!(is_valid_public_ip("2606:4700:4700::1111")); // Cloudflare DNS
+        assert!(is_valid_publi c_ip("2606:4700:4700::1111")); // Cloudflare DNS
         assert!(is_valid_public_ip("2404:6800:4003:c00::64")); // Google
     }
 

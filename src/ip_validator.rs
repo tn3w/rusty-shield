@@ -495,7 +495,7 @@ mod tests {
     #[test]
     fn test_valid_public_ipv6() {
         assert!(is_valid_public_ip("2001:0db7:85a3:0000:0000:8a2e:0370:7334")); // Valid public address
-        assert!(is_valid_publi c_ip("2606:4700:4700::1111")); // Cloudflare DNS
+        assert!(is_valid_public_ip("2606:4700:4700::1111")); // Cloudflare DNS
         assert!(is_valid_public_ip("2404:6800:4003:c00::64")); // Google
     }
 

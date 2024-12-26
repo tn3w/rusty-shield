@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="LANGUAGE">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Human Verification</title>
+        <style>
+            :root {
+                --background: #f7f9fc;
+                --text: #333;
+                --border: #ccc;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --background: #1a1a1a;
+                    --text: #f2f2f2;
+                    --border-color: #555;
+                }
+            }
+
+            * {
+                font-family: Arial, sans-serif;
+                color: var(--text);
+                text-align: center;
+            }
+
+            body {
+                margin: 0;
+                background-color: var(--background);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+            }
+
+            img {
+                width: 200px;
+                height: auto;
+                border-radius: 5px;
+                box-shadow: 2px 2px 5px var(--border);
+            }
+
+            .square-img {
+                display: block;
+                margin: 0 auto;
+            }
+
+            .caption {
+                font-size: 18px;
+                margin: 20px auto;
+            }
+
+            .error {
+                color: #ff0000;
+                font-size: 16px;
+            }
+
+            .img-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                grid-gap: 10px;
+                margin-top: 20px;
+            }
+
+            .grid-img {
+                width: 100px;
+            }
+            
+            .small {
+                margin-top: 2rem;
+                font-size: 0.7em;
+                opacity: 0.9;
+            }
+        </style>
+    </head>
+    <body>
+        <img class="square-img" src="data:image/webp;base64,ORIGINALIMAGE" alt="Original Image">
+        <p class="caption">Select the picture that contains the same motif:</p>
+        <p class="caption error">ERRORMESSAGE</p>
+        <div class="img-grid">
+            <a href="REQUESTURLst=STATE&ii=1"><img class="grid-img" src="data:image/webp;base64,IMAGE1" alt="Image 1" role="button"></a>
+            <a href="REQUESTURLst=STATE&ii=2"><img class="grid-img" src="data:image/webp;base64,IMAGE2" alt="Image 2" role="button"></a>
+            <a href="REQUESTURLst=STATE&ii=3"><img class="grid-img" src="data:image/webp;base64,IMAGE3" alt="Image 3" role="button"></a>
+            <a href="REQUESTURLst=STATE&ii=4"><img class="grid-img" src="data:image/webp;base64,IMAGE4" alt="Image 4" role="button"></a>
+            <a href="REQUESTURLst=STATE&ii=5"><img class="grid-img" src="data:image/webp;base64,IMAGE5" alt="Image 5" role="button"></a>
+        </div>
+        <p class="small">REASON - Rus ID: AEGID - Provided by <a href="https://github.com/tn3w/rusty-shield" target="_blank">rusty-shield</a></p>
+    </body>
+</html>

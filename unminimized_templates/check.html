@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="LANGUAGE">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Checking the browser ...</title>
+        <noscript>
+            <meta http-equiv="refresh" content="0;url=REQUESTURLnojs=1">
+        </noscript>
+        <style>
+            :root {
+                --background: #f7f9fc;
+                --text: #333;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --background: #1a1a1a;
+                    --text: #f2f2f2;
+                }
+            }
+
+            * {
+                font-family: Arial, sans-serif;
+                color: var(--text);
+                text-align: center;
+            }
+
+            body {
+                margin: 0;
+                background-color: var(--background);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+            }
+
+            main {
+                padding: 40px;
+            }
+
+            .dots {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            .dot {
+                width: 15px;
+                height: 15px;
+                border-radius: 50%;
+                background-color: var(--text);
+                margin: 0 5px;
+                animation: bounce 1s infinite ease-in-out;
+            }
+
+            .dot:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            .dot:nth-child(3) {
+                animation-delay: 0.4s;
+            }
+
+            .small {
+                margin-top: 2rem;
+                font-size: 0.7em;
+                opacity: 0.9;
+            }
+
+            @keyframes bounce {
+                50% {
+                    transform: translateY(-10px);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <div class="dots">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+            <h1>Checking the browser before accessing DOMAIN.</h1>
+            <p>This process is automatic. Your browser will redirect to your requested content shortly.</p>
+            <p>This may take up to 10 seconds...</p>
+            <form id="browserCheckForm" method="post" action="">
+                <input type="hidden" name="ps" value="POWSTATE">
+            </form>
+            <p class="small">REASON - Rus ID: RUSID - Provided by <a href="https://github.com/tn3w/rusty-shield" target="_blank">rusty-shield</a></p>
+        </main>
+        <script>class C{constructor(t=navigator.hardwareConcurrency||4){this.workerCount=t,this.workers=[],this.currentSolutions=new Map}s(t,e,r){if(this.currentSolutions.has(t))return;const o="0".repeat(e);let n=!1;this.workers=Array.from({length:this.workerCount},((e,s)=>{const a=new Worker(URL.createObjectURL(new Blob(['const calculateHash=async t=>{const a=(new TextEncoder).encode(t),e=await crypto.subtle.digest("SHA-256",a);return Array.from(new Uint8Array(e)).map((t=>t.toString(16).padStart(2,"0"))).join("")};self.onmessage=async function(t){const{salt:a,prefix:e,start:s,step:r,batchSize:n}=t.data;let o=s;for(;;)for(let t=0;t<n;t++){if((await calculateHash(a+o)).startsWith(e))return void self.postMessage(o);o+=r}};'])));a.onmessage=e=>{if(!n){n=!0,this.workers.forEach((t=>t.terminate()));const o=e.data;this.currentSolutions.set(t,o);const s=document.createElement("input");s.type="hidden",s.name="sp",s.value=o,r.appendChild(s),r.submit()}};return a.postMessage({salt:t,prefix:o,start:s,step:this.workerCount,batchSize:1e3}),a}))}getSolution(t){return this.currentSolutions.get(t)||null}}document.addEventListener("DOMContentLoaded",(function(){const t=document.getElementById("browserCheckForm");(new C).s("POWCHALLENGE",DIFFICULTY,t)}));</script>
+    </body>
+</html>

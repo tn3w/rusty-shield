@@ -3,8 +3,8 @@ use redis::{Client, Commands, RedisError};
 use sha2::{Sha256, Digest};
 use std::error::Error;
 
-pub(crate) fn get_domain_host(request_url: &str) -> String {
-    let host = match Url::parse(request_url) {
+pub(crate) fn get_domain_host(request_url: String) -> String {
+    let host = match Url::parse(&*request_url) {
         Ok(url) => {
             let mut host = url.host_str().unwrap_or("");
             if let Some(pos) = host.find(':') {

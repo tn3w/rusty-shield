@@ -73,7 +73,7 @@ fn translate_template(template: Option<String>, lang_code: &str) -> String {
     template
 }
 
-fn render_template(template_name: &str, lang_code: &str, request_url: &str) -> String {
+fn render_template(template_name: &str, lang_code: &str, request_url: String) -> String {
     let template = get_template(template_name);
     let mut translated_template = translate_template(template, lang_code);
 
@@ -85,18 +85,19 @@ fn render_template(template_name: &str, lang_code: &str, request_url: &str) -> S
     translated_template
 }
 
-fn render_check(lang_code: &str, request_url: &str, ) -> String {
+pub fn render_check(lang_code: &str, request_url: String, reason: String) -> String {
     let mut template = render_template("check.html", lang_code, request_url);
 
     let pow = PoW::new(get_pow(), 5);
     let (challenge, state) = pow.generate_challenge("127.0.0.1");
-    template = template.replace("DIFFICULTY", "5");
+    template = template.replace("DIFFICULTY", "10");
     template = template.replace("POWCHALLENGE", &*encode_text(&challenge));
     template = template.replace("POWSTATE", &*encode_text(&state));
+    template = template.replace("REASON", &*encode_text(&reason));
     template
 }
 
-fn render_captcha(lang_code: &str, request_url: &str) -> String {
+fn render_captcha(lang_code: &str, request_url: String) -> String {
     let template = render_template("captcha.html", lang_code, request_url);
     template
 }

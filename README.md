@@ -10,7 +10,7 @@
 <p align="center">An Actix-web middleware for checking IP addresses to identify unglobal, malicious, and TOR connections. It provides the browser with a zero-click Proof of Work (PoW) task, or, if JavaScript is disabled, a one-click CAPTCHA image challenge.</p>
 
 ## 🚀 Installing
-Just add the following line to [dependencies] in your Cargo.toml file:
+Just add the following line to `[dependencies]` in your `Cargo.toml` file:
 ```toml
 [dependencies]
 rusty_shield = { git = "https://github.com/tn3w/rusty-shield" }
@@ -20,17 +20,19 @@ And then integrate the MiddleWare into your Actix-web app by registering it:
 
 ```rust
 use actix_web::{web, App, HttpServer, HttpResponse};
-use rusty_shield::CookieMiddleware;
+use rusty_shield::{RequestValidationMiddleware, CookieMiddleware};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
-            .wrap(CookieMiddleware)  // Register the cookie middleware
+            //.wrap(RateLimitMiddleware) // Coming soon
+            .wrap(RequestValidationMiddleware) // Register the request validation middleware
             .service(
                 web::scope("")
                     .route("/", web::get().to(|| async { HttpResponse::Ok().body("Hello World!") }))
             )
+            .wrap(CookieMiddleware)  // Register the cookie middleware after all services (required for RequestValidationMiddleware)
     })
     .bind("127.0.0.1:8080")?
     .run()

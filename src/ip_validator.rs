@@ -325,8 +325,8 @@ mod tests {
     async fn benchmark_ipv4_tor() {
         let ip_checker = IpChecker::new("redis://127.0.0.1/").unwrap();
 
-        // Before testing gather new ip addresses
-        // since these might be inactive
+        // Before testing, gather new IP addresses, as some of these
+        // may be inactive and no longer considered valid TOR exit nodes.
         let ips = [
             "92.246.84.133",
             "178.20.55.182",
@@ -349,8 +349,8 @@ mod tests {
     async fn benchmark_ip_tor_exonerator() {
         let ip_checker = IpChecker::new("redis://127.0.0.1/").unwrap();
 
-        // Before testing gather new ip addresses
-        // since these might be inactive
+        // Before testing, gather new IP addresses, as some of these
+        // may be inactive and no longer considered valid TOR exit nodes.
         let ips = [
             "92.246.84.133",
             "178.20.55.182",
@@ -397,6 +397,8 @@ mod tests {
             "IPv6 address was incorrectly processed by IPv4 Tor checker"
         );
 
+        // Before testing, gather new IP addresses, as some of these
+        // may be inactive and no longer considered valid TOR exit nodes.
         assert!(
             ip_checker.is_ipv4_tor("92.246.84.133").await.expect("Failed to check known Tor exit node"),
             "Known Tor exit node was not correctly identified"
@@ -455,6 +457,8 @@ mod tests {
             "OpenDNS Public DNS IPv6 address was incorrectly identified as a Tor exit node"
         );
 
+        // Before testing, gather new IP addresses, as some of these
+        // may be inactive and no longer considered valid TOR exit nodes.
         assert!(
             ip_checker.is_ip_tor_exonerator("92.246.84.133").await.expect("Failed to check IPv4 address in Tor exonerator"),
             "Known Tor exit node was not found in exonerator database"

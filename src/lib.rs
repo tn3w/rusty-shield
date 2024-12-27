@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 use std::future::{ready, Future, Ready};
 use std::pin::Pin;
-use futures_util::{future::LocalBoxFuture};
+use std::sync::Arc;
+use futures_util::future::LocalBoxFuture;
 use actix_web::{
     cookie,
     dev::{
@@ -43,7 +44,6 @@ const LANGUAGES: [&str; 107] = [
 #[derive(Clone)]
 pub struct RequestValidationMiddleware;
 
-
 impl RequestValidationMiddleware {
     pub fn new() -> Self {
         Self
@@ -63,12 +63,14 @@ where
     type Future = Ready<Result<Self::Transform, Self::InitError>>;
 
     fn new_transform(&self, service: S) -> Self::Future {
-        ready(Ok(RequestValidationMiddlewareService { service }))
+        ready(Ok(RequestValidationMiddlewareService {
+            service: Arc::new(service),
+        }))
     }
 }
 
 pub struct RequestValidationMiddlewareService<S> {
-    service: S,
+    service: Arc<S>,
 }
 
 impl<S, B> Service<ServiceRequest> for RequestValidationMiddlewareService<S>
@@ -84,7 +86,7 @@ where
     forward_ready!(service);
 
     fn call(&self, req: ServiceRequest) -> Self::Future {
-        let service = self.service.clone();
+        let service = Arc::clone(&self.service);
 
         Box::pin(async move {
             let ip = req

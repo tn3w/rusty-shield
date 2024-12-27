@@ -29,10 +29,6 @@ mod captcha;
 // TODO: Each request will distort these images and store the correct versions along with a timestamp and the corresponding IP address
 // TODO: for correlation purposes. All templates and AI datasets should be preloaded into memory at startup for efficient access.
 
-pub struct RequestValidationMiddlewareService<S> {
-    service: S,
-}
-
 const LANGUAGES: [&str; 107] = [
     "af", "sq", "am", "ar", "hy", "az", "eu", "be", "bn", "bs", "bg", "ca", "ceb", "ny",
     "zh-cn", "zh-tw", "co", "hr", "cs", "da", "nl", "en", "eo", "et", "tl", "fi", "fr",
@@ -44,7 +40,9 @@ const LANGUAGES: [&str; 107] = [
     "uk", "ur", "ug", "uz", "vi", "cy", "xh", "yi", "yo", "zu"
 ];
 
+#[derive(Clone)]
 pub struct RequestValidationMiddleware;
+
 
 impl RequestValidationMiddleware {
     pub fn new() -> Self {
@@ -67,6 +65,10 @@ where
     fn new_transform(&self, service: S) -> Self::Future {
         ready(Ok(RequestValidationMiddlewareService { service }))
     }
+}
+
+pub struct RequestValidationMiddlewareService<S> {
+    service: S,
 }
 
 impl<S, B> Service<ServiceRequest> for RequestValidationMiddlewareService<S>

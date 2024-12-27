@@ -52,7 +52,7 @@ impl RequestValidationMiddleware {
 
 impl<S, B> Transform<S, ServiceRequest> for RequestValidationMiddleware
 where
-    S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error> + Clone + 'static,
+    S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error> + 'static + std::clone::Clone,
     S::Future: 'static,
     B: 'static + MessageBody,
 {

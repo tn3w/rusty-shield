@@ -74,3 +74,6 @@ async fn main() -> std::io::Result<()> {
     ```bash
     cargo build --release
     ```
+
+### Attribution
+- Logo icon: [Rust icons created by Freepik - Flaticon](https://www.flaticon.com/free-icons/rust)
